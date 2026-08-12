@@ -1,17 +1,16 @@
 import json
-from openai import OpenAI
-from config import OPENAI_API_KEY
+from config import get_azure_client, AZURE_OPENAI_DEPLOYMENT
 from validate.validator import validate
 from generate.prompts import SYSTEM_MSG, REPAIR_TEMPLATE
-
-client = OpenAI(api_key=OPENAI_API_KEY)
 
 MAX_ITERATIONS = 3
 
 
 def repair_until_valid(draft: dict, page: dict) -> tuple[dict, dict]:
     """Validate → fix loop. Returns (final_jsonld, validation_report)."""
+    client  = get_azure_client()
     current = draft
+
     for _ in range(MAX_ITERATIONS):
         report = validate(current)
         if report["valid"]:
@@ -24,7 +23,7 @@ def repair_until_valid(draft: dict, page: dict) -> tuple[dict, dict]:
             page_text=page["text"][:4000],
         )
         resp = client.chat.completions.create(
-            model="gpt-4o",
+            model=AZURE_OPENAI_DEPLOYMENT,
             messages=[
                 {"role": "system", "content": SYSTEM_MSG},
                 {"role": "user", "content": user_msg},

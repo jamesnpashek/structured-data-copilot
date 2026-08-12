@@ -27,8 +27,10 @@ docs/              Architecture and decision records
 cp .env.example .env
 # add OPENAI_API_KEY
 
-python -m venv .venv && source .venv/bin/activate
+# Requires Python 3.12 (3.14 not yet supported by pydantic-core/greenlet)
+python3.12 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+playwright install chromium
 
 docker-compose up -d          # start local Chroma
 bash scripts/build_corpus.sh  # one-time corpus build

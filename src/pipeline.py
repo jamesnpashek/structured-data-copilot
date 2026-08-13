@@ -12,7 +12,7 @@ from output.rationale import build_rationale
 def run_pipeline(url: str) -> dict:
     raw_html = fetch_page(url)
     content, existing_jsonld = extract(raw_html)
-    page = normalize(content, existing_jsonld)
+    page = normalize(content, existing_jsonld, url=url)
 
     context_docs = retrieve(page["schema_types"])
     draft = generate(page, context_docs)
